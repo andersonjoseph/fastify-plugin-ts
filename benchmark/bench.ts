@@ -33,7 +33,8 @@ const benchmarkCases: BenchmarkCase[] = [
     metadata: {
       decorators: {
         fastify: ['plugin1', 'plugin2'],
-        reply: ['compress']
+        reply: ['compress'],
+        request: ['request-decorator']
       }
     }
   }

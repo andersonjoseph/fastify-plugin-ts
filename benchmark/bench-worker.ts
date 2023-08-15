@@ -19,6 +19,7 @@ type FpOrFpTs = typeof fp | typeof fpts
 
 const numberOfPlugins = 10
 const suite = new Benchmark.Suite({
+  defer: true,
   name: workerData.name,
   minSamples: 100,
   async: true,
@@ -47,29 +48,24 @@ function registerDependencies (fastifyInstance: FastifyInstance, fpLike: FpOrFpT
 }
 
 function registerDecorators (fastifyInstance: FastifyInstance, fpLike: FpOrFpTs): void {
-  for (const decoratorName of (workerData.metadata.decorators?.fastify as string[] | undefined) ?? []) {
-    fastifyInstance.decorate(
-      decoratorName,
-      fpLike(
-        (_fastify, _opts, next) => next(),
-        {
-          name: decoratorName
-        }
+  const decorators = workerData.metadata.decorators
+  const decorate = (decoratorType: string, decorateFn: Function): void => {
+    for (const decoratorName of (decorators?.[decoratorType] as string[] | undefined) ?? []) {
+      decorateFn(
+        decoratorName,
+        fpLike(
+          (_fastify, _opts, next) => next(),
+          {
+            name: decoratorName
+          }
+        )
       )
-    )
+    }
   }
 
-  for (const decoratorName of (workerData.metadata.decorators?.reply as string[] | undefined) ?? []) {
-    fastifyInstance.decorateReply(
-      decoratorName,
-      fpLike(
-        (_fastify, _opts, next) => next(),
-        {
-          name: decoratorName
-        }
-      )
-    )
-  }
+  decorate('fastify', fastifyInstance.decorate.bind(fastifyInstance))
+  decorate('reply', fastifyInstance.decorateReply.bind(fastifyInstance))
+  decorate('request', fastifyInstance.decorateRequest.bind(fastifyInstance))
 }
 
 function registerPlugins (fastifyInstance: FastifyInstance, fpLike: FpOrFpTs): void {
