@@ -8,7 +8,8 @@
     "lint": "ts-standard",
     "test": "tap --ts --no-check-coverage",
     "build": "tsc",
-    "prepublish": "npm run build && npm test"
+    "prepublish": "npm run build && npm test",
+    "benchmark": "node -r ts-node/register ./benchmark/bench.ts"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,9 @@
     "@types/node": "^20.1.0",
     "@types/proxyquire": "^1.3.28",
     "@types/tap": "^15.0.8",
-    "fastify": "^4.0.1",
+    "benchmark-async": "^2.2.0",
+    "fastify": "^4.20.0",
+    "fastify-plugin": "^4.5.1",
     "proxyquire": "^2.1.3",
     "tap": "^16.0.1",
     "ts-node": "^10.9.1",
